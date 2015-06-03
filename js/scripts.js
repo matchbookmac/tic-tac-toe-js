@@ -3,10 +3,63 @@
 
 //jQuery
 $( document ).ready(function() {
-    console.log( "jQuery Ready" );
+  //Make an SVG Container
+  var game = new Game;
+  var board = game.board;
+  var spaces = board.spaces;
 
-    $("#jqtest").text('jQuery Ready')
+
+  var svgContainer = d3.select("#board").append("svg")
+                                      .attr("width", 440)
+                                      .attr("height", 440)
+                                      .attr("fill", "blue");
+
+  //Draw the Rectangle
+  var y = 10;
+  var counter = 0;
+  for (var i = 1 ; i <= 3; i++) {
+    var x = 10;
+    for (var j = 1; j <= 3; j++) {
+      var spaceUnit = svgContainer.append("g")
+
+      var rectangle = spaceUnit.append("rect")
+                                  .attr("x", x)
+                                  .attr("y", y)
+                                  .attr("width", (400/3))
+                                  .attr("height", (400/3))
+                                  .attr("fill", "red")
+                                  .attr("id", counter);
+
+      var text = spaceUnit.append("text")
+                                  .attr("x", x + 10)
+                                  .attr("y", y + 10)
+                                  .attr("dy", 105)
+                                  .attr("dx", 15)
+                                  .attr("width", (400/3))
+                                  .attr("height", (400/3))
+                                  .attr("id", "text" + counter)
+                                  .attr("font-size", "9em")
+                                  .text("");
+      x += (400/3) + 10;
+      counter += 1;
+    }
+    y += (400/3) + 10;
+  }
+
+  var pieces = $('#board').children().find('rect');
+  var textpieces = $('#board').children().find('text');
+
+  pieces.on('click', function(event) {
+    var piece = event.target.id;
+    var turn = game.turn[0]
+    var playerTurn = game.turn[1]
+    event.preventDefault()
+    spaces[piece].mark(playerTurn)
+    game.takeTurn;
+    $("#text" + piece).text(playerTurn.mark);
+  });
 });
+
 
 //raw js
 // PLAYER
@@ -108,16 +161,16 @@ function Game() {
   this.player2 = new Player("O")
   this.players = [this.player1, this.player2]
   this.board = new Board()
-  this.turn = [0, "X"]
+  this.turn = [0, this.player1]
 }
 
 Game.prototype.takeTurn = function() {
   var turn = this.turn;
   this.turn[0] += 1;
   if (turn[0] % 2 ===0) {
-    turn[1] = "X";
+    turn[1] = this.player1;
   } else {
-    turn[1] = "O"
+    turn[1] = this.player2
   }
 }
 
