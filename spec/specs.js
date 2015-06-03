@@ -59,7 +59,8 @@ describe('Game', function() {
     it("should increment turn by one, and indicate which player's turn it is", function() {
       var game = new Game();
       game.takeTurn();
-      expect(game.turn).to.eql([1, game.player2]);
+      expect(game.turn).to.equal(1);
+      expect(game.playerTurn).to.equal(game.player2)
     });
   });
 
@@ -82,7 +83,7 @@ describe('Game', function() {
       board.spaces[7].mark(player2);
       game.takeTurn();
       board.spaces[8].mark(player1);
-      expect(game.gameOver(board.spaces[8])).to.eql([true, player1]);
+      expect(game.gameOver(board.spaces[8])).to.eql({ win: true, winningPlayer: player1 });
     });
   });
 });

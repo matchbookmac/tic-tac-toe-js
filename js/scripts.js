@@ -53,21 +53,21 @@ $( document ).ready(function() {
   pieces.on('click', function(event) {
     event.preventDefault();
     var piece = event.target.id;
-    var turn = game.turn[0];
-    var playerTurn = game.turn[1];
+    var turn = game.turn;
+    var playerTurn = game.playerTurn;
     // var gameOver = game.gameOver();
     if (spaces[piece].checkMark === null) {
       spaces[piece].mark(playerTurn)
       $("#text" + piece).text(playerTurn.mark);
-      playerTurn = game.turn[1];
+      playerTurn = game.playerTurn;
       var gameOver = game.gameOver(spaces[piece], playerTurn)
       game.takeTurn();
     } else {
       alert("That space is already taken");
       var gameOver = game.gameOver(spaces[piece], playerTurn)
     }
-    if (gameOver[0]) {
-      alert("Game Over " + gameOver[1].mark + " wins!");
+    if (gameOver.win) {
+      alert("Game Over " + gameOver.winningPlayer.mark + " wins!");
       game = new Game;
       location.reload();
     }
@@ -109,10 +109,6 @@ function Board() {
 
 };
 
-Board.prototype.findSpace = function(i) {
-  this.spaces[i]
-};
-
 Board.prototype.gameOver = function(space, player) {
   var playerMark = player.mark;
   var win = false, horizontalWin = false, verticalWin = false, positiveDiagWin = false, negativeDiagWin = false;
@@ -150,7 +146,6 @@ Board.prototype.gameOver = function(space, player) {
 };
 
 function checkSpaces(board, increment, marks, mark) {
-  // var marks = [];
   var win = false;
   if (typeof board.spaces[increment] != "undefined" && board.spaces[increment].checkMark === mark) {
     marks.push(board.spaces[increment].checkMark);
@@ -167,23 +162,24 @@ function Game() {
   this.player2 = new Player("O")
   this.players = [this.player1, this.player2]
   this.board = new Board()
-  this.turn = [0, this.player1]
+  this.turn = 0
+  this.playerTurn = this.player1
 }
 
 Game.prototype.takeTurn = function() {
+  this.turn += 1;
   var turn = this.turn;
-  this.turn[0] += 1;
-  if (turn[0] % 2 ===0) {
-    turn[1] = this.player1;
+  if (turn % 2 ===0) {
+    this.playerTurn = this.player1;
   } else {
-    turn[1] = this.player2;
+    this.playerTurn = this.player2;
   }
 }
 
 Game.prototype.gameOver = function(space) {
-  if (this.board.gameOver(space, this.turn[1])) {
-    return [true, this.turn[1]]
+  if (this.board.gameOver(space, this.playerTurn)) {
+    return { win: true, winningPlayer: this.playerTurn };
   } else {
-    return [false];
+    return { win: false };
   }
 }
