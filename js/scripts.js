@@ -120,24 +120,28 @@ Board.prototype.gameOver = function(space, player) {
 
 
   if (playerMark = space.checkMark) {
-    for(var horizontal = space.boardIndex-2; horizontal <= 2; horizontal += 1) {
+    for(var horizontal = space.boardIndex-2; horizontal <= 8 && horizontal + 1 <= Math.ceil((space.boardIndex + 1)/3.0) * 3; horizontal += 1) {
       if (!horizontalWin) {
         horizontalWin = checkSpaces(this, horizontal, horizontalMarks, playerMark);
+        console.log(horizontalMarks);
       }
     }
     for(var vertical = space.boardIndex-6; vertical <= 8; vertical += 3) {
       if (!verticalWin) {
         verticalWin = checkSpaces(this, vertical, verticalMarks, playerMark);
+        console.log(verticalMarks);
       }
     }
-    for(var positiveDiag = space.boardIndex-8; positiveDiag <= 8; positiveDiag += 4) {
+    for(var positiveDiag = 0; positiveDiag <= 8; positiveDiag += 4) {
       if (!positiveDiagWin) {
         positiveDiagWin = checkSpaces(this, positiveDiag, positiveDiagMarks, playerMark);
+        console.log(positiveDiagMarks);
       }
     }
-    for(var negativeDiag = space.boardIndex-6; negativeDiag <= 6; negativeDiag += 2) {
+    for(var negativeDiag = 2; negativeDiag <= 6; negativeDiag += 2) {
       if (!negativeDiagWin) {
         negativeDiagWin = checkSpaces(this, negativeDiag, negativeDiagMarks, playerMark);
+        console.log(negativeDiagMarks);
       }
     }
   }
