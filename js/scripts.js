@@ -10,11 +10,11 @@ $( document ).ready(function() {
 
 
   var svgContainer = d3.select("#play-board").append("svg")
-                                      .attr("width", 440)
-                                      .attr("height", 440)
-                                      .attr("fill", "blue");
+    .attr("width", 440)
+    .attr("height", 440)
+    .attr("fill", "blue");
 
-  //Draw the Rectangle
+  //Draw the Board
   var y = 10;
   var counter = 0;
   for (var i = 1 ; i <= 3; i++) {
@@ -23,31 +23,32 @@ $( document ).ready(function() {
       var spaceUnit = svgContainer.append("g")
 
       var rectangle = spaceUnit.append("rect")
-                                  .attr("x", x)
-                                  .attr("y", y)
-                                  .attr("width", (400/3))
-                                  .attr("height", (400/3))
-                                  .attr("fill", "red")
-                                  .attr("id", counter);
+        .attr("x", x)
+        .attr("y", y)
+        .attr("width", (400/3))
+        .attr("height", (400/3))
+        .attr("fill", "red")
+        .attr("id", counter);
 
       var text = spaceUnit.append("text")
-                                  .attr("x", x + 10)
-                                  .attr("y", y + 10)
-                                  .attr("dy", 105)
-                                  .attr("dx", 15)
-                                  .attr("width", (400/3))
-                                  .attr("height", (400/3))
-                                  .attr("id", "text" + counter)
-                                  .attr("font-size", "9em")
-                                  .text("");
+        .attr("x", x + 10)
+        .attr("y", y + 10)
+        .attr("dy", 105)
+        .attr("dx", 15)
+        .attr("width", (400/3))
+        .attr("height", (400/3))
+        .attr("id", "text" + counter)
+        .attr("font-size", "9em")
+        .text("");
       x += (400/3) + 10;
       counter += 1;
     }
     y += (400/3) + 10;
   }
 
+////Game functions
+
   var pieces = $('#play-board').children().find('rect');
-  var textpieces = $('#play-board').children().find('text');
 
   pieces.on('click', function(event) {
     event.preventDefault();
@@ -65,10 +66,11 @@ $( document ).ready(function() {
       alert("That space is already taken");
       var gameOver = game.gameOver(spaces[piece], playerTurn)
     }
-  if (gameOver[0]) {
-    alert("Game Over " + gameOver[1].mark + " wins!");
-    game = new Game;
-  }
+    if (gameOver[0]) {
+      alert("Game Over " + gameOver[1].mark + " wins!");
+      game = new Game;
+      location.reload();
+    }
   });
 });
 
@@ -87,10 +89,7 @@ function Player(mark) {
 };
 
 // SPACE
-function Space(index, coordinates, mark) {
-  this.coordinates = coordinates;
-  this.xCoordinate = coordinates[0];
-  this.yCoordinate = coordinates[1];
+function Space(index, mark) {
   this.checkMark = mark;
   this.boardIndex = index;
 };
@@ -104,22 +103,14 @@ Space.prototype.mark = function(player) {
 // BOARD
 function Board() {
   this.spaces = [];
-  var i = 0;
-  for (var y = 1; y <= 3; y++) {
-    for(var x = 1; x <= 3; x++) {
-      this.spaces.push(new Space(i, [x, y], null));
-      i++;
+  for (var i = 0; i <= 8; i++) {
+      this.spaces.push(new Space(i, null));
     };
-  };
+
 };
 
-Board.prototype.findSpace = function(coordinates) {
-  var length = this.spaces.length;
-  for (var i = 0; i < length; i++) {
-    if (this.spaces[i].coordinates[0] === coordinates[0] && this.spaces[i].coordinates[1] === coordinates[1]) {
-      return this.spaces[i];
-    }
-  }
+Board.prototype.findSpace = function(i) {
+  this.spaces[i]
 };
 
 Board.prototype.gameOver = function(space, player) {
