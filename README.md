@@ -14,6 +14,7 @@ Tic Tac Toe
 
 An interactive javascript webpage that allows user to play a click-based version of tic-tac-toe. The first person to click on the board is auto-assigned
 "X" as their player value, and the second is assigned "O". Presumably you already know how the game works.
+
 ### Author(s)
 
 Ian MacDonald
