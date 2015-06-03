@@ -70,6 +70,10 @@ $( document ).ready(function() {
       alert("Game Over " + gameOver.winningPlayer.mark + " wins!");
       game = new Game;
       location.reload();
+    } else if (gameOver.draw) {
+      alert("It's a draw!");
+      game = new Game;
+      location.reload();
     }
   });
 });
@@ -177,9 +181,24 @@ Game.prototype.takeTurn = function() {
 }
 
 Game.prototype.gameOver = function(space) {
+  var marks = [];
+  var results = {};
   if (this.board.gameOver(space, this.playerTurn)) {
     return { win: true, winningPlayer: this.playerTurn };
   } else {
-    return { win: false };
+    results.win =  false;
   }
-}
+
+  if (!results.win){
+    for (var i = 0; i <= 8; i++) {
+      var mark = this.board.spaces[i].checkMark;
+      if (mark != null) {
+        marks.push(mark);
+      }
+      if (marks.length === 9) {
+        results.draw = true;
+      }
+    }
+  }
+  return results;
+};
