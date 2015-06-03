@@ -9,7 +9,7 @@ $( document ).ready(function() {
   var spaces = board.spaces;
 
 
-  var svgContainer = d3.select("#board").append("svg")
+  var svgContainer = d3.select("#play-board").append("svg")
                                       .attr("width", 440)
                                       .attr("height", 440)
                                       .attr("fill", "blue");
@@ -46,17 +46,29 @@ $( document ).ready(function() {
     y += (400/3) + 10;
   }
 
-  var pieces = $('#board').children().find('rect');
-  var textpieces = $('#board').children().find('text');
+  var pieces = $('#play-board').children().find('rect');
+  var textpieces = $('#play-board').children().find('text');
 
   pieces.on('click', function(event) {
+    event.preventDefault();
     var piece = event.target.id;
-    var turn = game.turn[0]
-    var playerTurn = game.turn[1]
-    event.preventDefault()
-    spaces[piece].mark(playerTurn)
-    game.takeTurn;
-    $("#text" + piece).text(playerTurn.mark);
+    var turn = game.turn[0];
+    var playerTurn = game.turn[1];
+    // var gameOver = game.gameOver();
+    if (spaces[piece].checkMark === null) {
+      spaces[piece].mark(playerTurn)
+      game.takeTurn();
+      $("#text" + piece).text(playerTurn.mark);
+      playerTurn = game.turn[1];
+      var gameOver = game.gameOver()
+    } else {
+      alert("That space is already taken");
+      var gameOver = game.gameOver()
+    }
+  if (gameOver[0]) {
+    alert("Game Over " + gameOver[1].mark + " wins!");
+    game = new Game;
+  }
   });
 });
 
@@ -79,6 +91,7 @@ function Space(coordinates, mark) {
   this.coordinates = coordinates;
   this.xCoordinate = coordinates[0];
   this.yCoordinate = coordinates[1];
+  this.checkMark = mark;
 };
 
 Space.prototype.mark = function(player) {
@@ -112,8 +125,8 @@ Board.prototype.gameOver = function(player) {
   var horizontalMarks = [], verticalMarks = [], positiveDiagMarks = [], negativeDiagMarks = [];
 
   for(var space = 0; space < 9; space++) {
-    if (playerMark = this.spaces[0].checkMark) {
-      for(var horizontal = -2; horizontal <= 2; horizontal++) {
+    if (playerMark = this.spaces[space].checkMark) {
+      for(var horizontal = -2; horizontal <= 2; horizontal += 1) {
         if (!horizontalWin) {
           horizontalWin = checkSpaces(this, horizontal, horizontalMarks, playerMark);
         }
@@ -170,12 +183,14 @@ Game.prototype.takeTurn = function() {
   if (turn[0] % 2 ===0) {
     turn[1] = this.player1;
   } else {
-    turn[1] = this.player2
+    turn[1] = this.player2;
   }
 }
 
 Game.prototype.gameOver = function() {
-  if (this.board.gameOver) {
+  if (this.board.gameOver(this.turn[1])) {
     return [true, this.turn[1]]
+  } else {
+    return [false];
   }
 }

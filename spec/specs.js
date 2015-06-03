@@ -62,11 +62,11 @@ describe('Game', function() {
     expect(game.board.spaces.length).to.eql(9)
   });
 
-  describe('takeTurn', function() {    
+  describe('takeTurn', function() {
     it("should increment turn by one, and indicate which player's turn it is", function() {
       var game = new Game();
       game.takeTurn();
-      expect(game.turn).to.eql([1, "O"]);
+      expect(game.turn).to.eql([1, game.player2]);
     });
   });
 
@@ -89,7 +89,7 @@ describe('Game', function() {
       board.spaces[7].mark(player2);
       game.takeTurn();
       board.spaces[8].mark(player1);
-      expect(game.gameOver()).to.eql([true, player1.mark]);
+      expect(game.gameOver()).to.eql([true, player1]);
     });
   });
 });
