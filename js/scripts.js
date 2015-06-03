@@ -57,13 +57,13 @@ $( document ).ready(function() {
     // var gameOver = game.gameOver();
     if (spaces[piece].checkMark === null) {
       spaces[piece].mark(playerTurn)
-      game.takeTurn();
       $("#text" + piece).text(playerTurn.mark);
       playerTurn = game.turn[1];
-      var gameOver = game.gameOver()
+      var gameOver = game.gameOver(spaces[piece], playerTurn)
+      game.takeTurn();
     } else {
       alert("That space is already taken");
-      var gameOver = game.gameOver()
+      var gameOver = game.gameOver(spaces[piece], playerTurn)
     }
   if (gameOver[0]) {
     alert("Game Over " + gameOver[1].mark + " wins!");
@@ -87,11 +87,12 @@ function Player(mark) {
 };
 
 // SPACE
-function Space(coordinates, mark) {
+function Space(index, coordinates, mark) {
   this.coordinates = coordinates;
   this.xCoordinate = coordinates[0];
   this.yCoordinate = coordinates[1];
   this.checkMark = mark;
+  this.boardIndex = index;
 };
 
 Space.prototype.mark = function(player) {
@@ -103,9 +104,11 @@ Space.prototype.mark = function(player) {
 // BOARD
 function Board() {
   this.spaces = [];
+  var i = 0;
   for (var y = 1; y <= 3; y++) {
     for(var x = 1; x <= 3; x++) {
-      this.spaces.push(new Space([x, y], null));
+      this.spaces.push(new Space(i, [x, y], null));
+      i++;
     };
   };
 };
@@ -119,35 +122,34 @@ Board.prototype.findSpace = function(coordinates) {
   }
 };
 
-Board.prototype.gameOver = function(player) {
+Board.prototype.gameOver = function(space, player) {
   var playerMark = player.mark;
   var win = false, horizontalWin = false, verticalWin = false, positiveDiagWin = false, negativeDiagWin = false;
   var horizontalMarks = [], verticalMarks = [], positiveDiagMarks = [], negativeDiagMarks = [];
 
-  for(var space = 0; space < 9; space++) {
-    if (playerMark = this.spaces[space].checkMark) {
-      for(var horizontal = -2; horizontal <= 2; horizontal += 1) {
-        if (!horizontalWin) {
-          horizontalWin = checkSpaces(this, horizontal, horizontalMarks, playerMark);
-        }
-      }
-      for(var vertical = -6; vertical <= 6; vertical += 3) {
-        if (!verticalWin) {
-          verticalWin = checkSpaces(this, vertical, verticalMarks, playerMark);
-        }
-      }
-      for(var positiveDiag = -8; positiveDiag <= 8; positiveDiag += 4) {
-        if (!positiveDiagWin) {
-          positiveDiagWin = checkSpaces(this, positiveDiag, positiveDiagMarks, playerMark);
-        }
-      }
-      for(var negativeDiag = -6; negativeDiag <= 6; negativeDiag += 2) {
-        if (!negativeDiagWin) {
-          negativeDiagWin = checkSpaces(this, negativeDiag, negativeDiagMarks, playerMark);
-        }
+
+  if (playerMark = space.checkMark) {
+    for(var horizontal = space.boardIndex-2; horizontal <= 2; horizontal += 1) {
+      if (!horizontalWin) {
+        horizontalWin = checkSpaces(this, horizontal, horizontalMarks, playerMark);
       }
     }
-  };
+    for(var vertical = space.boardIndex-6; vertical <= 8; vertical += 3) {
+      if (!verticalWin) {
+        verticalWin = checkSpaces(this, vertical, verticalMarks, playerMark);
+      }
+    }
+    for(var positiveDiag = space.boardIndex-8; positiveDiag <= 8; positiveDiag += 4) {
+      if (!positiveDiagWin) {
+        positiveDiagWin = checkSpaces(this, positiveDiag, positiveDiagMarks, playerMark);
+      }
+    }
+    for(var negativeDiag = space.boardIndex-6; negativeDiag <= 6; negativeDiag += 2) {
+      if (!negativeDiagWin) {
+        negativeDiagWin = checkSpaces(this, negativeDiag, negativeDiagMarks, playerMark);
+      }
+    }
+  }
 
   if (horizontalWin || verticalWin || positiveDiagWin || negativeDiagWin) {
     win = true;
@@ -187,8 +189,8 @@ Game.prototype.takeTurn = function() {
   }
 }
 
-Game.prototype.gameOver = function() {
-  if (this.board.gameOver(this.turn[1])) {
+Game.prototype.gameOver = function(space) {
+  if (this.board.gameOver(space, this.turn[1])) {
     return [true, this.turn[1]]
   } else {
     return [false];

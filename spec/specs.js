@@ -7,13 +7,19 @@ describe('Player', function() {
 
 describe('Space', function(){
   it("knows its coordinates", function() {
-    var testSpace = new Space([1, 1], null)
+    var testSpace = new Space(0, [1, 1], null)
     expect(testSpace.coordinates).to.eql([1, 1])
+  });
+
+  it("knows its index on the board", function() {
+    var board = new Board();
+    var space = board.spaces[2];
+    expect(space.boardIndex).to.equal(2);
   });
 
   describe('mark', function() {
     it("can be marked X or O", function(){
-      var testSpace = new Space([1, 1], null)
+      var testSpace = new Space(0, [1, 1], null)
       var player = new Player("X");
       testSpace.mark(player)
       expect(testSpace.checkMark).to.equal("X")
@@ -48,7 +54,7 @@ describe('Board', function() {
       board.spaces[0].mark(player);
       board.spaces[1].mark(player);
       board.spaces[2].mark(player);
-      expect(board.gameOver(player)).to.eql(true);
+      expect(board.gameOver(board.spaces[2], player)).to.eql(true);
     });
   });
 });
@@ -89,7 +95,7 @@ describe('Game', function() {
       board.spaces[7].mark(player2);
       game.takeTurn();
       board.spaces[8].mark(player1);
-      expect(game.gameOver()).to.eql([true, player1]);
+      expect(game.gameOver(board.spaces[8])).to.eql([true, player1]);
     });
   });
 });
