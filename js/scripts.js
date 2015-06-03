@@ -9,6 +9,7 @@ $( document ).ready(function() {
 });
 
 //raw js
+// PLAYER
 function Player(mark) {
   mark = mark.toUpperCase();
   if (mark === "X"){
@@ -20,6 +21,7 @@ function Player(mark) {
   };
 };
 
+// SPACE
 function Space(coordinates, mark) {
   this.coordinates = coordinates;
   this.xCoordinate = coordinates[0];
@@ -32,6 +34,7 @@ Space.prototype.mark = function(player) {
   this.checkMark = player.mark;
 };
 
+// BOARD
 function Board() {
   this.spaces = [];
   for (var y = 1; y <= 3; y++) {
@@ -99,10 +102,27 @@ function checkSpaces(board, increment, marks, mark) {
   return win;
 };
 
+// GAME
 function Game() {
   this.player1 = new Player("X")
   this.player2 = new Player("O")
   this.players = [this.player1, this.player2]
   this.board = new Board()
   this.turn = [0, "X"]
+}
+
+Game.prototype.takeTurn = function() {
+  var turn = this.turn;
+  this.turn[0] += 1;
+  if (turn[0] % 2 ===0) {
+    turn[1] = "X";
+  } else {
+    turn[1] = "O"
+  }
+}
+
+Game.prototype.gameOver = function() {
+  if (this.board.gameOver) {
+    return [true, this.turn[1]]
+  }
 }
